@@ -160,6 +160,7 @@ export default function createAnimatableComponent(WrappedComponent) {
       onAnimationEnd: PropTypes.func,
       onTransitionBegin: PropTypes.func,
       onTransitionEnd: PropTypes.func,
+      onIteration: PropTypes.func,
       style: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.array,
@@ -184,6 +185,7 @@ export default function createAnimatableComponent(WrappedComponent) {
       onAnimationEnd() {},
       onTransitionBegin() {},
       onTransitionEnd() {},
+      onIteration() {},
       style: undefined,
       transition: undefined,
       useNativeDriver: false,
@@ -385,7 +387,7 @@ export default function createAnimatableComponent(WrappedComponent) {
 
     startAnimation(duration, iteration, iterationDelay, callback) {
       const { animationValue, compiledAnimation } = this.state;
-      const { direction, iterationCount, useNativeDriver } = this.props;
+      const { direction, iterationCount, useNativeDriver, onIteration } = this.props;
       let easing = this.props.easing || compiledAnimation.easing || 'ease';
       let currentIteration = iteration || 0;
       const fromValue = getAnimationOrigin(currentIteration, direction);
@@ -419,6 +421,7 @@ export default function createAnimatableComponent(WrappedComponent) {
           this.props.animation &&
           (iterationCount === 'infinite' || currentIteration < iterationCount)
         ) {
+          onIteration(currentIteration);
           this.startAnimation(
             duration,
             currentIteration,
